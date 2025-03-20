@@ -2,20 +2,21 @@
 //  Mission.swift
 //  Moonshot
 //
-//  Created by Sai Nikhil Varada on 3/11/25.
+//  Created by Sai Nikhil Varada on 3/19/25.
 //
 
 import Foundation
 
-struct Mission : Codable, Identifiable{
-    
+
+struct Mission: Codable, Identifiable{
+
     struct CrewRole : Codable{
         let name : String
         let role : String
     }
-    
+
     let id : Int
-    let launchDate : String?
+    let launchDate : Date?
     let crew : [CrewRole]
     let description : String
     
@@ -24,6 +25,11 @@ struct Mission : Codable, Identifiable{
     }
     
     var image : String{
-        "apollo \(id)"
+        "apollo\(id)"
     }
+    
+    var formattedLaunchDate: String{
+        launchDate?.formatted(date: .abbreviated, time: .omitted) ?? "N/A"
+    }
+    
 }

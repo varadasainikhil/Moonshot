@@ -2,38 +2,28 @@
 //  Bundle-Decodable.swift
 //  Moonshot
 //
-//  Created by Sai Nikhil Varada on 3/11/25.
+//  Created by Sai Nikhil Varada on 3/19/25.
 //
 
 import Foundation
 
 extension Bundle{
-    func decode<T : Codable>(_ file : String) -> T{
-        // Finding the file in the bundle
-        guard let url = self.url(forResource: file, withExtension: nil) else{
+    func decode<T:Codable>(_ file : String) -> T{
+        guard let url = self.url(forResource: file, withExtension: nil)else{
             fatalError("Failed to locate \(file) in bundle.")
         }
-        
-        // loading contents of the file in data
         guard let data = try? Data(contentsOf: url)else{
-            fatalError("Failed to load \(file) from Bundle.")
+            fatalError("Failed to load \(file) from bundle.")
         }
         
-        // decode data
         let decoder = JSONDecoder()
-        do {
-            return try decoder.decode(T.self, from: data)
-        } catch DecodingError.keyNotFound(let key, let context){
-            fatalError("Failed to decode \(file) from bundle due to missing key '\(key.stringValue) - \(context.debugDescription)")
-        } catch DecodingError.typeMismatch(_, let context){
-            fatalError("Failed to decode \(file)  from bundle due to type mismatch -\(context.debugDescription)")
-        } catch DecodingError.valueNotFound(let type, let context){
-            fatalError("Failed to decode \(file) from bundle due ot missing \(type) value - \(context.debugDescription)")
-        } catch DecodingError.dataCorrupted(_){
-            fatalError("Failed to decode \(file) from bundle becuase it appears to be invalid JSON.")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "y-MM-dd"
+        decoder.dateDecodingStrategy  = .formatted(formatter)
+         
+        guard let loaded = try? decoder.decode(T.self, from: data)else{
+            fatalError("Failed to decode the file.")
         }
-        catch{
-            fatalError("Failed to decode \(file) from bundle : \(error.localizedDescription)")
-        }
+        return loaded
     }
 }
